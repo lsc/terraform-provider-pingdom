@@ -18,8 +18,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          go-version: stable
-          cache: true
+          skip-cache: false
           version: v2.6.1
           only-new-issues: true
 
