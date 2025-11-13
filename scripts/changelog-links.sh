@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script rewrites [GH-nnnn]-style references in the CHANGELOG.md file to
 # be Markdown links to the given github issues.
@@ -16,7 +16,7 @@ if [[ ! -f CHANGELOG.md ]]; then
   exit 1
 fi
 
-if [[ `uname` == "Darwin" ]]; then
+if [[ $(uname) == "Darwin" ]]; then
   echo "Using BSD sed"
   SED="sed -i.bak -E -e"
 else
