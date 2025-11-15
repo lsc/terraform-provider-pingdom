@@ -23,13 +23,6 @@ test:
 clean:
 	rm -rf build/
 
-build-linux: mod
-	@docker build -t build .
-	@docker run --detach --name build build
-	@docker cp build:/app/$(PLUGIN_NAME) ./build/linux_amd64/$(PLUGIN_NAME)_$(TAG)
-	@docker rm -f build
-	@docker rmi build
-
 mod:
 	@go mod tidy
 	@go mod vendor
