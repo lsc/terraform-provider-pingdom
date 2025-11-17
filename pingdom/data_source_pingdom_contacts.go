@@ -33,16 +33,16 @@ func dataSourcePingdomContacts() *schema.Resource {
 	}
 }
 
-func dataSourcePingdomContactsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourcePingdomContactsRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 	contacts, err := client.Contacts.List()
 	if err != nil {
 		return diag.Errorf("Error retrieving contacts: %s", err)
 	}
 
-	var ids = make([]int, 0, len(contacts))
-	var names = make([]string, 0, len(contacts))
-	var types = make([]string, 0, len(contacts))
+	ids := make([]int, 0, len(contacts))
+	names := make([]string, 0, len(contacts))
+	types := make([]string, 0, len(contacts))
 	for _, contact := range contacts {
 		ids = append(ids, contact.ID)
 		names = append(names, contact.Name)

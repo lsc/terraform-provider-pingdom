@@ -28,15 +28,15 @@ func dataSourcePingdomTeams() *schema.Resource {
 	}
 }
 
-func dataSourcePingdomTeamsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourcePingdomTeamsRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 	teams, err := client.Teams.List()
 	if err != nil {
 		return diag.Errorf("Error retrieving teams: %s", err)
 	}
 
-	var ids = make([]int, 0, len(teams))
-	var names = make([]string, 0, len(teams))
+	ids := make([]int, 0, len(teams))
+	names := make([]string, 0, len(teams))
 	for _, team := range teams {
 		ids = append(ids, team.ID)
 		names = append(names, team.Name)

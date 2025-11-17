@@ -22,6 +22,7 @@ test:
 
 clean:
 	rm -rf build/
+	rm -rf dist/
 
 mod:
 	@go mod tidy

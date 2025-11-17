@@ -6,10 +6,10 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/mbarper/go-pingdom/pingdom"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/mbarper/go-pingdom/pingdom"
 )
 
 func resourcePingdomContact() *schema.Resource {
@@ -86,7 +86,7 @@ func getNotificationMethods(d *schema.ResourceData) (pingdom.NotificationTargets
 	hasHighSeverity := false
 
 	for _, raw := range d.Get("sms_notification").(*schema.Set).List() {
-		input := raw.(map[string]interface{})
+		input := raw.(map[string]any)
 		sms := pingdom.SMSNotification{
 			CountryCode: input["country_code"].(string),
 			Number:      input["number"].(string),
@@ -109,7 +109,7 @@ func getNotificationMethods(d *schema.ResourceData) (pingdom.NotificationTargets
 	}
 
 	for _, raw := range d.Get("email_notification").(*schema.Set).List() {
-		input := raw.(map[string]interface{})
+		input := raw.(map[string]any)
 		email := pingdom.EmailNotification{
 			Address:  input["address"].(string),
 			Severity: input["severity"].(string),
@@ -124,7 +124,7 @@ func getNotificationMethods(d *schema.ResourceData) (pingdom.NotificationTargets
 	}
 
 	if !hasHighSeverity || !hasLowSeverity {
-		return base, fmt.Errorf("You must provide both a high and low severity notification method")
+		return base, fmt.Errorf("you must provide both a high and low severity notification method")
 	}
 
 	return base, nil
@@ -185,7 +185,7 @@ func updateResourceFromContactResponse(d *schema.ResourceData, c *pingdom.Contac
 	return nil
 }
 
-func resourcePingdomContactCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomContactCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	contact, err := contactForResource(d)
@@ -203,7 +203,7 @@ func resourcePingdomContactCreate(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourcePingdomContactRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomContactRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())
@@ -225,7 +225,7 @@ func resourcePingdomContactRead(ctx context.Context, d *schema.ResourceData, met
 	return nil
 }
 
-func resourcePingdomContactUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomContactUpdate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())
@@ -246,7 +246,7 @@ func resourcePingdomContactUpdate(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourcePingdomContactDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomContactDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())

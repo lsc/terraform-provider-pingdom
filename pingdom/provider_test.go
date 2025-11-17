@@ -11,8 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-var testAccProviders map[string]*schema.Provider
-var testAccProvider *schema.Provider
+var (
+	testAccProviders map[string]*schema.Provider
+	testAccProvider  *schema.Provider
+)
 
 func init() {
 	testAccProvider = Provider()
@@ -40,7 +42,7 @@ func TestProviderConfigure(t *testing.T) {
 		expectedToken = "foo"
 	}
 
-	raw := map[string]interface{}{
+	raw := map[string]any{
 		"api_token": expectedToken,
 	}
 

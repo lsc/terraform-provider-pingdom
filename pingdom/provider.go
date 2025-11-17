@@ -52,9 +52,9 @@ func Provider() *schema.Provider {
 	}
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+func providerConfigure(d *schema.ResourceData) (any, error) {
 	var config Config
-	configRaw := d.Get("").(map[string]interface{})
+	configRaw := d.Get("").(map[string]any)
 	if err := mapstructure.Decode(configRaw, &config); err != nil {
 		return nil, err
 	}

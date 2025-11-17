@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mbarper/go-pingdom/pingdom"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/mbarper/go-pingdom/pingdom"
 )
 
 func dataSourcePingdomTeam() *schema.Resource {
@@ -29,7 +29,7 @@ func dataSourcePingdomTeam() *schema.Resource {
 	}
 }
 
-func dataSourcePingdomTeamRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourcePingdomTeamRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 	name := d.Get("name").(string)
 	teams, err := client.Teams.List()

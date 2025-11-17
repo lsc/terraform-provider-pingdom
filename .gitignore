@@ -8,6 +8,7 @@ examples/.terraform
 
 build/
 vendor/*
+dist/*
 
 /.vscode
 

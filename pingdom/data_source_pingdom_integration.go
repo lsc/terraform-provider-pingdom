@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mbarper/go-pingdom/pingdomext"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/mbarper/go-pingdom/pingdomext"
 )
 
 func dataSourcePingdomIntegration() *schema.Resource {
@@ -35,7 +35,7 @@ func dataSourcePingdomIntegration() *schema.Resource {
 	}
 }
 
-func dataSourcePingdomIntegrationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourcePingdomIntegrationRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).PingdomExt
 
 	if client == nil {
