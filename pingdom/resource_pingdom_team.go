@@ -53,7 +53,7 @@ func teamForResource(d *schema.ResourceData) (*pingdom.Team, error) {
 	return &team, nil
 }
 
-func resourcePingdomTeamCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomTeamCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	team, err := teamForResource(d)
@@ -71,7 +71,7 @@ func resourcePingdomTeamCreate(ctx context.Context, d *schema.ResourceData, meta
 	return nil
 }
 
-func resourcePingdomTeamRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomTeamRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	teams, err := client.Teams.List()
@@ -103,8 +103,8 @@ func resourcePingdomTeamRead(ctx context.Context, d *schema.ResourceData, meta i
 	}
 
 	memberids := schema.NewSet(
-		func(memberId interface{}) int { return memberId.(int) },
-		[]interface{}{},
+		func(memberId any) int { return memberId.(int) },
+		[]any{},
 	)
 	for _, member := range team.Members {
 		memberids.Add(member.ID)
@@ -116,7 +116,7 @@ func resourcePingdomTeamRead(ctx context.Context, d *schema.ResourceData, meta i
 	return nil
 }
 
-func resourcePingdomTeamUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomTeamUpdate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())
@@ -137,7 +137,7 @@ func resourcePingdomTeamUpdate(ctx context.Context, d *schema.ResourceData, meta
 	return nil
 }
 
-func resourcePingdomTeamDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomTeamDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())

@@ -154,7 +154,7 @@ resource "pingdom_occurrence" "test" {
 }
 `))
 	var buf bytes.Buffer
-	if err := t.Execute(&buf, map[string]interface{}{
+	if err := t.Execute(&buf, map[string]any{
 		"maintenance": maintenance,
 		"from":        from,
 		"to":          to,
