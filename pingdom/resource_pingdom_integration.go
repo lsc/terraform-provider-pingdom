@@ -6,10 +6,10 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/mbarper/go-pingdom/pingdomext"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/mbarper/go-pingdom/pingdomext"
 )
 
 const (
@@ -82,10 +82,10 @@ func integrationForResource(d *schema.ResourceData, client *pingdomext.Client) (
 		return integration, nil
 	}
 
-	return nil, fmt.Errorf("Unsupported integration provider %s", providerName)
+	return nil, fmt.Errorf("unsupported integration provider %s", providerName)
 }
 
-func resourcePingdomIntegrationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomIntegrationCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).PingdomExt
 
 	if client == nil {
@@ -111,7 +111,7 @@ func resourcePingdomIntegrationCreate(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourcePingdomIntegrationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomIntegrationUpdate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).PingdomExt
 
 	if client == nil {
@@ -140,7 +140,7 @@ func resourcePingdomIntegrationUpdate(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourcePingdomIntegrationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomIntegrationRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).PingdomExt
 
 	if client == nil {
@@ -191,7 +191,7 @@ func resourcePingdomIntegrationRead(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func resourcePingdomIntegrationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomIntegrationDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).PingdomExt
 
 	if client == nil {
@@ -225,5 +225,5 @@ func getIntegrationProvider(providerName string, client *pingdomext.Client) (*pi
 			return &provider, nil
 		}
 	}
-	return nil, fmt.Errorf("Unable find the integration provider %s", providerName)
+	return nil, fmt.Errorf("unable find the integration provider %s", providerName)
 }

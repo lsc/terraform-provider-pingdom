@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mbarper/go-pingdom/pingdom"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/mbarper/go-pingdom/pingdom"
 )
 
 func dataSourcePingdomContact() *schema.Resource {
@@ -85,7 +85,7 @@ func dataSourcePingdomContact() *schema.Resource {
 	}
 }
 
-func dataSourcePingdomContactRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourcePingdomContactRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 	name := d.Get("name").(string)
 	contacts, err := client.Contacts.List()
@@ -109,9 +109,9 @@ func dataSourcePingdomContactRead(ctx context.Context, d *schema.ResourceData, m
 		return diag.Errorf("Error setting name: %s", err)
 	}
 
-	teams := []map[string]interface{}{}
+	teams := []map[string]any{}
 	for _, team := range found.Teams {
-		teams = append(teams, map[string]interface{}{
+		teams = append(teams, map[string]any{
 			"id":   team.ID,
 			"name": team.Name,
 		})

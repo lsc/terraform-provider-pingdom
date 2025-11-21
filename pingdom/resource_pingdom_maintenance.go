@@ -133,8 +133,8 @@ func updateResourceFromMaintenanceResponse(d *schema.ResourceData, m *pingdom.Ma
 	}
 
 	tmsids := schema.NewSet(
-		func(tmsId interface{}) int { return tmsId.(int) },
-		[]interface{}{},
+		func(tmsId any) int { return tmsId.(int) },
+		[]any{},
 	)
 	for _, tms := range m.Checks.Tms {
 		tmsids.Add(tms)
@@ -144,8 +144,8 @@ func updateResourceFromMaintenanceResponse(d *schema.ResourceData, m *pingdom.Ma
 	}
 
 	uptimeids := schema.NewSet(
-		func(uptimeId interface{}) int { return uptimeId.(int) },
-		[]interface{}{},
+		func(uptimeId any) int { return uptimeId.(int) },
+		[]any{},
 	)
 	for _, uptime := range m.Checks.Uptime {
 		uptimeids.Add(uptime)
@@ -157,7 +157,7 @@ func updateResourceFromMaintenanceResponse(d *schema.ResourceData, m *pingdom.Ma
 	return nil
 }
 
-func resourcePingdomMaintenanceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomMaintenanceCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	maintenance, err := maintenanceForResource(d)
@@ -175,7 +175,7 @@ func resourcePingdomMaintenanceCreate(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourcePingdomMaintenanceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomMaintenanceRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())
@@ -193,7 +193,7 @@ func resourcePingdomMaintenanceRead(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func resourcePingdomMaintenanceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomMaintenanceUpdate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())
@@ -212,7 +212,7 @@ func resourcePingdomMaintenanceUpdate(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourcePingdomMaintenanceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomMaintenanceDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())
@@ -225,7 +225,7 @@ func resourcePingdomMaintenanceDelete(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func convertIntInterfaceSliceToString(slice []interface{}) string {
+func convertIntInterfaceSliceToString(slice []any) string {
 	stringSlice := make([]string, len(slice))
 	for i := range slice {
 		stringSlice[i] = strconv.Itoa(slice[i].(int))

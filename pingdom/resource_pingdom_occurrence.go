@@ -115,7 +115,7 @@ func (g *OccurrenceGroup) Populate(client *pingdom.Client, d *schema.ResourceDat
 	if err != nil {
 		return err
 	}
-	for k, v := range map[string]interface{}{
+	for k, v := range map[string]any{
 		"from":           timeFormat(sample.From),
 		"to":             timeFormat(sample.To),
 		"effective_from": timeFormat(g.From),
@@ -166,18 +166,18 @@ func (g *OccurrenceGroup) Update(client *pingdom.Client, from int64, to int64) e
 		From: from,
 		To:   to,
 	}
-	return g.groupOp(client, func(occurrence pingdom.Occurrence) (interface{}, error) {
+	return g.groupOp(client, func(occurrence pingdom.Occurrence) (any, error) {
 		return client.Occurrences.Update(occurrence.Id, occurrenceUpdate)
 	})
 }
 
 func (g *OccurrenceGroup) Delete(client *pingdom.Client) error {
-	return g.groupOp(client, func(occurrence pingdom.Occurrence) (interface{}, error) {
+	return g.groupOp(client, func(occurrence pingdom.Occurrence) (any, error) {
 		return client.Occurrences.Delete(occurrence.Id)
 	})
 }
 
-func (g *OccurrenceGroup) groupOp(client *pingdom.Client, op func(occurrence pingdom.Occurrence) (interface{}, error)) error {
+func (g *OccurrenceGroup) groupOp(client *pingdom.Client, op func(occurrence pingdom.Occurrence) (any, error)) error {
 	occurrences, err := client.Occurrences.List(pingdom.ListOccurrenceQuery(*g))
 	if err != nil {
 		return err
@@ -213,7 +213,7 @@ func (g *OccurrenceGroup) groupOp(client *pingdom.Client, op func(occurrence pin
 	return nil
 }
 
-func resourcePingdomOccurrencesCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomOccurrencesCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	g, err := NewOccurrenceGroupWithResourceData(d)
@@ -269,7 +269,7 @@ func resourcePingdomOccurrencesCreate(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourcePingdomOccurrencesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomOccurrencesRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	g, err := NewOccurrenceGroupWithResourceData(d)
@@ -285,7 +285,7 @@ func resourcePingdomOccurrencesRead(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func resourcePingdomOccurrencesUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomOccurrencesUpdate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	g, err := NewOccurrenceGroupWithResourceData(d)
@@ -337,7 +337,7 @@ func resourcePingdomOccurrencesUpdate(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourcePingdomOccurrencesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomOccurrencesDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	occurrence, err := NewOccurrenceGroupWithResourceData(d)

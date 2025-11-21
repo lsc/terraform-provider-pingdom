@@ -8,17 +8,17 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mbarper/go-pingdom/pingdom"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/mbarper/go-pingdom/pingdom"
 )
 
 const (
-	checkTypeHttp = "http"
-	checkTypeTcp  = "tcp"
+	checkTypeHTTP = "http"
+	checkTypeTCP  = "tcp"
 	checkTypePing = "ping"
-	checkTypeDns  = "dns"
+	checkTypeDNS  = "dns"
 )
 
 func resourcePingdomCheck() *schema.Resource {
@@ -44,7 +44,7 @@ func resourcePingdomCheck() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{checkTypeHttp, checkTypeTcp, checkTypePing, checkTypeDns}, false),
+				ValidateFunc: validation.StringInSlice([]string{checkTypeHTTP, checkTypeTCP, checkTypePing, checkTypeDNS}, false),
 			},
 			"custom_message": {
 				Type:     schema.TypeString,
@@ -140,7 +140,7 @@ func resourcePingdomCheck() *schema.Resource {
 			"tags": {
 				Type:     schema.TypeString,
 				Optional: true,
-				StateFunc: func(val interface{}) string {
+				StateFunc: func(val any) string {
 					return sortString(val.(string), ",")
 				},
 			},
@@ -203,7 +203,7 @@ type commonCheckParams struct {
 	IntegrationIds           []int
 	UserIds                  []int
 	TeamIds                  []int
-	Url                      string
+	URL                      string
 	Encryption               bool
 	Port                     int
 	Username                 string
@@ -224,7 +224,7 @@ type commonCheckParams struct {
 }
 
 func diffSuppressIfNotHTTPCheck(k string, old string, new string, d *schema.ResourceData) bool {
-	return d.Get("type").(string) != checkTypeHttp
+	return d.Get("type").(string) != checkTypeHTTP
 }
 
 func sortString(input string, seperator string) string {
@@ -301,7 +301,7 @@ func checkForResource(d *schema.ResourceData) (pingdom.Check, error) {
 	}
 
 	if v, ok := d.GetOk("url"); ok {
-		checkParams.Url = v.(string)
+		checkParams.URL = v.(string)
 	}
 
 	if v, ok := d.GetOk("encryption"); ok {
@@ -334,7 +334,7 @@ func checkForResource(d *schema.ResourceData) (pingdom.Check, error) {
 
 	if m, ok := d.GetOk("requestheaders"); ok {
 		checkParams.RequestHeaders = make(map[string]string)
-		for k, v := range m.(map[string]interface{}) {
+		for k, v := range m.(map[string]any) {
 			checkParams.RequestHeaders[k] = v.(string)
 		}
 	}
@@ -377,7 +377,7 @@ func checkForResource(d *schema.ResourceData) (pingdom.Check, error) {
 
 	checkType := d.Get("type")
 	switch checkType {
-	case checkTypeHttp:
+	case checkTypeHTTP:
 		return &pingdom.HttpCheck{
 			Name:                     checkParams.Name,
 			Hostname:                 checkParams.Hostname,
@@ -390,7 +390,7 @@ func checkForResource(d *schema.ResourceData) (pingdom.Check, error) {
 			NotifyWhenBackup:         checkParams.NotifyWhenBackup,
 			IntegrationIds:           checkParams.IntegrationIds,
 			Encryption:               checkParams.Encryption,
-			Url:                      checkParams.Url,
+			Url:                      checkParams.URL,
 			Port:                     checkParams.Port,
 			Username:                 checkParams.Username,
 			Password:                 checkParams.Password,
@@ -422,7 +422,7 @@ func checkForResource(d *schema.ResourceData) (pingdom.Check, error) {
 			UserIds:                  checkParams.UserIds,
 			TeamIds:                  checkParams.TeamIds,
 		}, nil
-	case checkTypeTcp:
+	case checkTypeTCP:
 		return &pingdom.TCPCheck{
 			Name:                     checkParams.Name,
 			Hostname:                 checkParams.Hostname,
@@ -443,7 +443,7 @@ func checkForResource(d *schema.ResourceData) (pingdom.Check, error) {
 			StringToExpect:           checkParams.StringToExpect,
 			CustomMessage:            checkParams.CustomMessage,
 		}, nil
-	case checkTypeDns:
+	case checkTypeDNS:
 		return &pingdom.DNSCheck{
 			Name:                     checkParams.Name,
 			Hostname:                 checkParams.Hostname,
@@ -466,7 +466,7 @@ func checkForResource(d *schema.ResourceData) (pingdom.Check, error) {
 	}
 }
 
-func resourcePingdomCheckCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomCheckCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	check, err := checkForResource(d)
@@ -486,7 +486,7 @@ func resourcePingdomCheckCreate(ctx context.Context, d *schema.ResourceData, met
 	return resourcePingdomCheckRead(ctx, d, meta)
 }
 
-func resourcePingdomCheckRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomCheckRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())
@@ -547,7 +547,7 @@ func resourcePingdomCheckRead(ctx context.Context, d *schema.ResourceData, meta 
 	}
 
 	// We need to sort the strings here as the pingdom API returns them sorted by
-	//number of occurances across all checks
+	// number of occurances across all checks
 	sort.Strings(tags)
 	if err := d.Set("tags", strings.Join(tags, ",")); err != nil {
 		return diag.FromErr(err)
@@ -559,33 +559,33 @@ func resourcePingdomCheckRead(ctx context.Context, d *schema.ResourceData, meta 
 		}
 	}
 	integids := schema.NewSet(
-		func(integrationId interface{}) int { return integrationId.(int) },
-		[]interface{}{},
+		func(integrationId any) int { return integrationId.(int) },
+		[]any{},
 	)
-	for _, integrationId := range ck.IntegrationIds {
-		integids.Add(integrationId)
+	for _, integrationID := range ck.IntegrationIds {
+		integids.Add(integrationID)
 	}
 	if err := d.Set("integrationids", integids); err != nil {
 		return diag.FromErr(err)
 	}
 
 	userids := schema.NewSet(
-		func(userId interface{}) int { return userId.(int) },
-		[]interface{}{},
+		func(userId any) int { return userId.(int) },
+		[]any{},
 	)
-	for _, userId := range ck.UserIds {
-		userids.Add(userId)
+	for _, userID := range ck.UserIds {
+		userids.Add(userID)
 	}
 	if err := d.Set("userids", userids); err != nil {
 		return diag.FromErr(err)
 	}
 
 	teamids := schema.NewSet(
-		func(userId interface{}) int { return userId.(int) },
-		[]interface{}{},
+		func(userId any) int { return userId.(int) },
+		[]any{},
 	)
-	for _, userId := range ck.TeamIds {
-		teamids.Add(userId)
+	for _, userID := range ck.TeamIds {
+		teamids.Add(userID)
 	}
 	if err := d.Set("teamids", teamids); err != nil {
 		return diag.FromErr(err)
@@ -599,7 +599,7 @@ func resourcePingdomCheckRead(ctx context.Context, d *schema.ResourceData, meta 
 	}
 
 	if ck.Type.HTTP != nil {
-		if err := d.Set("type", checkTypeHttp); err != nil {
+		if err := d.Set("type", checkTypeHTTP); err != nil {
 			return diag.FromErr(err)
 		}
 		if err := d.Set("responsetime_threshold", ck.ResponseTimeThreshold); err != nil {
@@ -649,7 +649,7 @@ func resourcePingdomCheckRead(ctx context.Context, d *schema.ResourceData, meta 
 		}
 
 	} else if ck.Type.TCP != nil {
-		if err := d.Set("type", checkTypeTcp); err != nil {
+		if err := d.Set("type", checkTypeTCP); err != nil {
 			return diag.FromErr(err)
 		}
 		if err := d.Set("port", ck.Type.TCP.Port); err != nil {
@@ -661,14 +661,14 @@ func resourcePingdomCheckRead(ctx context.Context, d *schema.ResourceData, meta 
 		if err := d.Set("stringtoexpect", ck.Type.TCP.StringToExpect); err != nil {
 			return diag.FromErr(err)
 		}
-    if err := d.Set("responsetime_threshold", ck.ResponseTimeThreshold); err != nil {
+		if err := d.Set("responsetime_threshold", ck.ResponseTimeThreshold); err != nil {
 			return diag.FromErr(err)
 		}
 		if err := d.Set("ipv6", ck.IPv6); err != nil {
 			return diag.FromErr(err)
 		}
 	} else if ck.Type.DNS != nil {
-		if err := d.Set("type", checkTypeDns); err != nil {
+		if err := d.Set("type", checkTypeDNS); err != nil {
 			return diag.FromErr(err)
 		}
 		if err := d.Set("expectedip", ck.Type.DNS.ExpectedIP); err != nil {
@@ -689,7 +689,7 @@ func resourcePingdomCheckRead(ctx context.Context, d *schema.ResourceData, meta 
 	return nil
 }
 
-func resourcePingdomCheckUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomCheckUpdate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())
@@ -710,7 +710,7 @@ func resourcePingdomCheckUpdate(ctx context.Context, d *schema.ResourceData, met
 	return resourcePingdomCheckRead(ctx, d, meta)
 }
 
-func resourcePingdomCheckDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomCheckDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())

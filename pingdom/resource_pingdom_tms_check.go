@@ -116,7 +116,7 @@ func resourcePingdomTmsCheck() *schema.Resource {
 			"tags": {
 				Type:     schema.TypeString,
 				Optional: true,
-				StateFunc: func(val interface{}) string {
+				StateFunc: func(val any) string {
 					return sortString(val.(string), ",")
 				},
 			},
@@ -129,7 +129,7 @@ func resourcePingdomTmsCheck() *schema.Resource {
 	}
 }
 
-func convertInterfaceMapToStringMap(m map[string]interface{}) map[string]string {
+func convertInterfaceMapToStringMap(m map[string]any) map[string]string {
 	result := make(map[string]string, len(m))
 	for k, v := range m {
 		result[k] = v.(string)
@@ -139,8 +139,8 @@ func convertInterfaceMapToStringMap(m map[string]interface{}) map[string]string 
 
 func convertIntSliceToTypeSet(l []int) *schema.Set {
 	result := schema.NewSet(
-		func(integrationId interface{}) int { return integrationId.(int) },
-		[]interface{}{},
+		func(integrationId any) int { return integrationId.(int) },
+		[]any{},
 	)
 	for _, item := range l {
 		result.Add(item)
@@ -148,19 +148,19 @@ func convertIntSliceToTypeSet(l []int) *schema.Set {
 	return result
 }
 
-func expandTmsCheckSteps(l []interface{}) []pingdom.TMSCheckStep {
+func expandTmsCheckSteps(l []any) []pingdom.TMSCheckStep {
 	if len(l) == 0 || l[0] == nil {
 		return nil
 	}
 
 	steps := make([]pingdom.TMSCheckStep, 0, len(l))
 	for _, tfMapRaw := range l {
-		tfMap, ok := tfMapRaw.(map[string]interface{})
+		tfMap, ok := tfMapRaw.(map[string]any)
 		if !ok {
 			continue
 		}
 		step := pingdom.TMSCheckStep{}
-		if args, ok := tfMap["args"].(map[string]interface{}); ok {
+		if args, ok := tfMap["args"].(map[string]any); ok {
 			step.Args = convertInterfaceMapToStringMap(args)
 		}
 		if fn, ok := tfMap["fn"].(string); ok && fn != "" {
@@ -172,7 +172,7 @@ func expandTmsCheckSteps(l []interface{}) []pingdom.TMSCheckStep {
 	return steps
 }
 
-func expandTmsMetadata(m map[string]interface{}) *pingdom.TMSCheckMetaData {
+func expandTmsMetadata(m map[string]any) *pingdom.TMSCheckMetaData {
 	metadata := pingdom.TMSCheckMetaData{}
 
 	if v, ok := m["authentication"]; ok {
@@ -194,7 +194,7 @@ func expandTmsMetadata(m map[string]interface{}) *pingdom.TMSCheckMetaData {
 	return &metadata
 }
 
-func expandReferenceIds(l []interface{}) []int {
+func expandReferenceIds(l []any) []int {
 	var intSlice []int
 	for i := range l {
 		intSlice = append(intSlice, l[i].(int))
@@ -212,7 +212,7 @@ func toTmsCheck(d *schema.ResourceData) (*pingdom.TMSCheck, error) {
 
 	// required
 	if v, ok := d.GetOk("steps"); ok {
-		interfaceSlice := v.([]interface{})
+		interfaceSlice := v.([]any)
 		tmsCheck.Steps = expandTmsCheckSteps(interfaceSlice)
 	}
 
@@ -239,8 +239,8 @@ func toTmsCheck(d *schema.ResourceData) (*pingdom.TMSCheck, error) {
 	}
 
 	if v, ok := d.GetOk("metadata"); ok {
-		interfaceList := v.([]interface{})
-		tmsCheck.Metadata = expandTmsMetadata((interfaceList[0]).(map[string]interface{}))
+		interfaceList := v.([]any)
+		tmsCheck.Metadata = expandTmsMetadata((interfaceList[0]).(map[string]any))
 	}
 
 	if v, ok := d.GetOk("region"); ok {
@@ -269,7 +269,7 @@ func toTmsCheck(d *schema.ResourceData) (*pingdom.TMSCheck, error) {
 	return &tmsCheck, nil
 }
 
-func resourcePingdomTmsCheckCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomTmsCheckCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	check, err := toTmsCheck(d)
@@ -289,7 +289,7 @@ func resourcePingdomTmsCheckCreate(ctx context.Context, d *schema.ResourceData, 
 	return resourcePingdomTmsCheckRead(ctx, d, meta)
 }
 
-func resourcePingdomTmsCheckRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomTmsCheckRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())
@@ -320,18 +320,18 @@ func resourcePingdomTmsCheckRead(ctx context.Context, d *schema.ResourceData, me
 		return diag.FromErr(err)
 	}
 
-	steps := make([]map[string]interface{}, 0, len(ck.Steps))
+	steps := make([]map[string]any, 0, len(ck.Steps))
 	for _, stepObj := range ck.Steps {
-		step := map[string]interface{}{}
+		step := map[string]any{}
 		step["args"] = stepObj.Args
 		step["fn"] = stepObj.Fn
 		steps = append(steps, step)
 	}
 
-	var metadata []map[string]interface{}
+	var metadata []map[string]any
 	if ck.Metadata != nil {
-		m := map[string]interface{}{}
-		for k, v := range map[string]interface{}{
+		m := map[string]any{}
+		for k, v := range map[string]any{
 			"authentication":      ck.Metadata.Authentications,
 			"disable_websecurity": ck.Metadata.DisableWebSecurity,
 			"height":              ck.Metadata.Height,
@@ -346,7 +346,7 @@ func resourcePingdomTmsCheckRead(ctx context.Context, d *schema.ResourceData, me
 	//number of occurances across all checks
 	sort.Strings(ck.Tags)
 
-	for k, v := range map[string]interface{}{
+	for k, v := range map[string]any{
 		"name":                        ck.Name,
 		"steps":                       steps,
 		"active":                      ck.Active,
@@ -369,7 +369,7 @@ func resourcePingdomTmsCheckRead(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func resourcePingdomTmsCheckUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomTmsCheckUpdate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())
@@ -390,7 +390,7 @@ func resourcePingdomTmsCheckUpdate(ctx context.Context, d *schema.ResourceData, 
 	return resourcePingdomTmsCheckRead(ctx, d, meta)
 }
 
-func resourcePingdomTmsCheckDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePingdomTmsCheckDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Clients).Pingdom
 
 	id, err := strconv.Atoi(d.Id())

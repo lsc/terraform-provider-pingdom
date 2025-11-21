@@ -76,14 +76,14 @@ package pingdom
 // 	return &user, nil
 // }
 
-// func expandUserProducts(l []interface{}) []solarwinds.Product {
+// func expandUserProducts(l []any) []solarwinds.Product {
 // 	if len(l) == 0 || l[0] == nil {
 // 		return nil
 // 	}
 
 // 	m := make([]solarwinds.Product, 0, len(l))
 // 	for _, tfMapRaw := range l {
-// 		tfMap, ok := tfMapRaw.(map[string]interface{})
+// 		tfMap, ok := tfMapRaw.(map[string]any)
 // 		if !ok {
 // 			continue
 // 		}
@@ -100,7 +100,7 @@ package pingdom
 // 	return m
 // }
 
-// func resourceSolarwindsUserCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+// func resourceSolarwindsUserCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 // 	client := meta.(*Clients).Solarwinds
 
 // 	user, err := userFromResource(d)
@@ -118,7 +118,7 @@ package pingdom
 // 	return resourceSolarwindsUserRead(ctx, d, meta)
 // }
 
-// func resourceSolarwindsUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+// func resourceSolarwindsUserRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 // 	client := meta.(*Clients).Solarwinds
 
 // 	email := d.Id()
@@ -131,7 +131,7 @@ package pingdom
 // 		return nil
 // 	}
 
-// 	for k, v := range map[string]interface{}{
+// 	for k, v := range map[string]any{
 // 		"email":    user.Email,
 // 		"role":     user.Role,
 // 		"products": flattenUserProducts(user.Products),
@@ -144,13 +144,13 @@ package pingdom
 // 	return nil
 // }
 
-// func flattenUserProducts(l []solarwinds.Product) []interface{} {
+// func flattenUserProducts(l []solarwinds.Product) []any {
 // 	if l == nil {
-// 		return []interface{}{}
+// 		return []any{}
 // 	}
-// 	sets := make([]interface{}, 0, len(l))
+// 	sets := make([]any, 0, len(l))
 // 	for _, item := range l {
-// 		tfMap := map[string]interface{}{
+// 		tfMap := map[string]any{
 // 			"name": item.Name,
 // 			"role": item.Role,
 // 		}
@@ -160,7 +160,7 @@ package pingdom
 // 	return sets
 // }
 
-// func resourceSolarwindsUserUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+// func resourceSolarwindsUserUpdate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 // 	client := meta.(*Clients).Solarwinds
 // 	if d.HasChanges("role", "products") {
 // 		user, err := userFromResource(d)
@@ -178,7 +178,7 @@ package pingdom
 // 	return resourceSolarwindsUserRead(ctx, d, meta)
 // }
 
-// func resourceSolarwindsUserDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+// func resourceSolarwindsUserDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 // 	client := meta.(*Clients).Solarwinds
 
 // 	id := d.Id()
