@@ -9,11 +9,11 @@ This supports Pingdom API v3.1: [API reference docs](https://docs.pingdom.com/ap
 ## Requirements
 
 - Terraform 0.12.x
-- Go 1.14 (to build the provider plugin)
+- Go 1.24 (to build the provider plugin)
 
 ## Usage
 
-**Use provider**
+### Use Provider
 
 ```hcl
 terraform {
@@ -30,9 +30,9 @@ variable "solarwinds_user" {}
 variable "solarwinds_passwd" {}
 
 provider "pingdom" {
-    api_token         = "${var.pingdom_api_token}"
-    solarwinds_user   = "${var.solarwinds_user}"
-    solarwinds_passwd = "${var.solarwinds_passwd}"
+    api_token         = var.pingdom_api_token
+    solarwinds_user   = var.solarwinds_user
+    solarwinds_passwd = var.solarwinds_passwd
 }
 ```
 
@@ -58,7 +58,7 @@ terraform {
 variable "solarwinds_user" {}
 
 provider "pingdom" {
-    solarwinds_user   = "${var.solarwinds_user}"
+    solarwinds_user   = var.solarwinds_user
 }
 ```
 
