@@ -1,2 +1,59 @@
 [tools]
-go = "1.25.4"
+go = "1.26.2"
+golangci-lint = "latest"
+
+[settings]
+env_shell_expand = true
+
+[vars]
+name = 'terraform-provider-pingdom'
+goos = "$(go env GOOS)"
+goarch = "$(go env GOARCH)"
+tag = "$(git describe --abbrev=0 --tags)"
+plugin_path = "$(echo $HOME)/.terraform.d/plugins/{{vars.goos}}_{{vars.goarch}}"
+
+[tasks.build]
+description = "Build the Pingdom provider"
+alias = "b"
+depends = ["mod", "test"]
+run = 'go build -o build/{{vars.goos}}_{{vars.goarch}}/{{vars.name}}_{{vars.tag}}'
+
+[tasks.install]
+depends = "build"
+run = [
+  "install -d {{vars.plugin_path}}",
+  "install build/{{vars.goos}}_{{vars.goarch}}/{{vars.name}}_{{vars.tag}} {{vars.plugin_path}}",
+]
+
+[tasks.test]
+description = "Run the testsuite"
+alias = 't'
+depends = "lint"
+run = "go test -v -cover ./..."
+
+[tasks.testacc]
+description = "Run acceptance tests"
+env = { TF_ACC = 1 }
+usage = '''
+flag "-t --token <token>" help='Pingdom API token' env=PINGDOM_API_TOKEN
+flag "--tests <tests>" help="What tests to run" default=''
+'''
+run = "go test -timeout 600s -run={{usage.tests}} github.com/lsc/terraform-provider-pingdom/pingdom"
+
+[tasks.lint]
+run = "golangci-lint run"
+
+[tasks.mod]
+run = 'go mod tidy'
+
+[tasks.clean]
+description = "Delete the build and dist directories"
+alias = 'c'
+run = ['rm -r {{cwd}}/build', 'rm -r {{cwd}}/dist']
+
+[tasks.bump]
+hide = true
+usage = '''
+arg "<version>" help='Version of go to bump to'
+'''
+run = ["mise use go@{{usage.version}}", "go mod edit -go {{usage.version}}"]
