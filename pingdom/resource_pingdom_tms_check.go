@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mbarper/go-pingdom/pingdom"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/mbarper/go-pingdom/pingdom"
 )
 
 func resourcePingdomTmsCheck() *schema.Resource {
@@ -343,7 +343,7 @@ func resourcePingdomTmsCheckRead(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	// We need to sort the strings here as the pingdom API returns them sorted by
-	//number of occurances across all checks
+	// number of occurances across all checks
 	sort.Strings(ck.Tags)
 
 	for k, v := range map[string]any{
