@@ -5,6 +5,9 @@ golangci-lint = "latest"
 [settings]
 env_shell_expand = true
 
+[hooks]
+postinstall = "hk install --mise"
+
 [vars]
 name = 'terraform-provider-pingdom'
 goos = "$(go env GOOS)"
