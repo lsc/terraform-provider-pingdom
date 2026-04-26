@@ -1,7 +1,7 @@
 module github.com/lsc/terraform-provider-pingdom
 
 // We use go 1.25 as we expect to migrate to the terraform-provider-framework in the future
-go 1.25.4
+go 1.26.2
 
 require (
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.40.0
