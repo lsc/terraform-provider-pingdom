@@ -3,11 +3,8 @@ import "package://github.com/jdx/hk/releases/download/v1.44.1/hk@1.44.1#/Builtin
 
 local linters = new Mapping<String, Step> {
     // Add linters here. Examples:
-    // ["prettier"] = Builtins.prettier
-    // ["eslint"] = Builtins.eslint
-    // ["ruff"] = Builtins.ruff
     ["golangci"] = Builtins.golangci_lint
-
+    ["go-fumpt"] = Builtins.go_fumpt
 
     // Or define custom steps:
     // ["custom"] {
