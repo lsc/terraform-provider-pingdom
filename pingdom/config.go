@@ -58,7 +58,6 @@ func (c *Config) Client() (*Clients, error) {
 			Password: c.SolarwindsPassword,
 			OrgID:    c.SolarwindsOrgID,
 		})
-
 		if err != nil {
 			return nil, err
 		}

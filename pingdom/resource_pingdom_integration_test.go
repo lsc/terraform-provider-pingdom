@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/mbarper/go-pingdom/pingdomext"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/mbarper/go-pingdom/pingdomext"
 )
 
 func TestAccPingdomIntegration_basic(t *testing.T) {
@@ -87,7 +87,6 @@ func testAccCheckPingdomIntegrationDestroy(s *terraform.State) error {
 		}
 
 		resID, err := strconv.Atoi(rs.Primary.ID)
-
 		if err != nil {
 			return err
 		}
@@ -117,7 +116,6 @@ func testAccCheckPingdomIntegrationExists(n string, obj *pingdomext.IntegrationG
 		client := testAccProvider.Meta().(*Clients).PingdomExt
 
 		resID, err := strconv.Atoi(rs.Primary.ID)
-
 		if err != nil {
 			return err
 		}
