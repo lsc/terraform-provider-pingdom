@@ -1,15 +1,40 @@
 # terraform-provider-pingdom
 
 This project is a [terraform](http://www.terraform.io/) provider for [pingdom](https://www.pingdom.com/).
-
-This currently only supports working with basic HTTP and ping checks.
-
 This supports Pingdom API v3.1: [API reference docs](https://docs.pingdom.com/api/)
+<!--toc:start-->
+- [terraform-provider-pingdom](#terraform-provider-pingdom)
+  - [Requirements](#requirements)
+  - [Usage](#usage)
+    - [Use Provider](#use-provider)
+  - [Resources](#resources)
+    - [Pingdom Check](#pingdom-check)
+      - [Common Attributes](#common-attributes)
+      - [HTTP specific attributes](#http-specific-attributes)
+      - [TCP specific attributes](#tcp-specific-attributes)
+      - [DNS specific attributes](#dns-specific-attributes)
+    - [Pingdom TMS Check](#pingdom-tms-check)
+    - [Pingdom Team](#pingdom-team)
+    - [Pingdom Contact](#pingdom-contact)
+    - [Pingdom Maintenance](#pingdom-maintenance)
+    - [Pingdom Maintenance Occurrence](#pingdom-maintenance-occurrence)
+    - [Pingdom User](#pingdom-user)
+    - [Pingdom Integration](#pingdom-integration)
+  - [Develop The Provider](#develop-the-provider)
+    - [Dependencies for building from source](#dependencies-for-building-from-source)
+    - [Build](#build)
+    - [Install](#install)
+<!--toc:end-->
 
 ## Requirements
 
 - Terraform 0.12.x
-- Go 1.24 (to build the provider plugin)
+- Go 1.26 (to build the provider plugin)
+
+### Optional
+
+- [Mise](https://mise.jdx.dev/) (For tool management and development tasks)
+- [HK](https://hk.jdx.dev/) (For managing git hooks)
 
 ## Usage
 
@@ -20,7 +45,7 @@ terraform {
   required_providers {
     pingdom = {
       source  = "lsc/pingdom"
-      version = "~> 1.2"
+      version = "~> 0.2"
     }
   }
 }
@@ -50,7 +75,7 @@ terraform {
   required_providers {
     pingdom = {
       source  = "lsc/pingdom"
-      version = "~> 1.2"
+      version = "~> 0.2"
     }
   }
 }
