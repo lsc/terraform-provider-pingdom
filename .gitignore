@@ -6,7 +6,7 @@ examples/*.tfstate.backup
 examples/*.tfvars
 examples/.terraform
 
-build/
+_build/
 vendor/*
 dist/*
 

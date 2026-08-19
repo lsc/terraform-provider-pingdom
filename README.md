@@ -489,7 +489,7 @@ This project uses [Go Modules](https://github.com/golang/go/wiki/Modules) for de
 ### Build
 
 ```sh
-make build
+mise run build
 ```
 
 The binary will then be available at `_build/terraform-provider-pingdom_VERSION`.
@@ -497,7 +497,16 @@ The binary will then be available at `_build/terraform-provider-pingdom_VERSION`
 ### Install
 
 ```sh
-make install
+mise run install
+```
+
+### Acceptance test
+
+```sh
+mise run testacc --token <PINGDOM_API_TOKEN>
+or
+PINGDOM_API_TOKEN=token mise run testacc
+
 ```
 
 This will place the binary under `$HOME/.terraform.d/plugins/OS_ARCH/terraform-provider-pingdom_VERSION`. After installing you will need to run `terraform init` in any project using the plugin.
