@@ -1,7 +1,6 @@
 # terraform-provider-pingdom
 
-This project is a [terraform](http://www.terraform.io/) provider for [pingdom](https://www.pingdom.com/).
-This supports Pingdom API v3.1: [API reference docs](https://docs.pingdom.com/api/)
+This project is a [terraform](http://www.terraform.io/) provider for [pingdom](https://www.pingdom.com/), it supports Pingdom API v3.1: [API reference docs](https://docs.pingdom.com/api/)
 <!--toc:start-->
 - [terraform-provider-pingdom](#terraform-provider-pingdom)
   - [Requirements](#requirements)
