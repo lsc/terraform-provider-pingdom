@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 - 0.2.3 (August 18, 2026)
 
 BUG FIXES:
 
@@ -58,6 +58,8 @@ IMPROVEMENTS:
   resource per refresh.
 * `pingdom_check`: read attributes with `d.Get` rather than `d.GetOk`, which
   cannot distinguish an unset value from an explicit zero.
+
+# Historical releases, by Contentful and others
 
 ## 1.1.3 (October 20, 2020)
 
