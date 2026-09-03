@@ -1,15 +1,39 @@
 # terraform-provider-pingdom
 
-This project is a [terraform](http://www.terraform.io/) provider for [pingdom](https://www.pingdom.com/).
-
-This currently only supports working with basic HTTP and ping checks.
-
-This supports Pingdom API v3.1: [API reference docs](https://docs.pingdom.com/api/)
+This project is a [terraform](http://www.terraform.io/) provider for [pingdom](https://www.pingdom.com/), it supports Pingdom API v3.1: [API reference docs](https://docs.pingdom.com/api/)
+<!--toc:start-->
+- [terraform-provider-pingdom](#terraform-provider-pingdom)
+  - [Requirements](#requirements)
+  - [Usage](#usage)
+    - [Use Provider](#use-provider)
+  - [Resources](#resources)
+    - [Pingdom Check](#pingdom-check)
+      - [Common Attributes](#common-attributes)
+      - [HTTP specific attributes](#http-specific-attributes)
+      - [TCP specific attributes](#tcp-specific-attributes)
+      - [DNS specific attributes](#dns-specific-attributes)
+    - [Pingdom TMS Check](#pingdom-tms-check)
+    - [Pingdom Team](#pingdom-team)
+    - [Pingdom Contact](#pingdom-contact)
+    - [Pingdom Maintenance](#pingdom-maintenance)
+    - [Pingdom Maintenance Occurrence](#pingdom-maintenance-occurrence)
+    - [Pingdom User](#pingdom-user)
+    - [Pingdom Integration](#pingdom-integration)
+  - [Develop The Provider](#develop-the-provider)
+    - [Dependencies for building from source](#dependencies-for-building-from-source)
+    - [Build](#build)
+    - [Install](#install)
+<!--toc:end-->
 
 ## Requirements
 
 - Terraform 0.12.x
-- Go 1.24 (to build the provider plugin)
+- Go 1.26 (to build the provider plugin)
+
+### Optional
+
+- [Mise](https://mise.jdx.dev/) (For tool management and development tasks)
+- [HK](https://hk.jdx.dev/) (For managing git hooks)
 
 ## Usage
 
@@ -20,7 +44,7 @@ terraform {
   required_providers {
     pingdom = {
       source  = "lsc/pingdom"
-      version = "~> 1.2"
+      version = "~> 0.2"
     }
   }
 }
@@ -50,7 +74,7 @@ terraform {
   required_providers {
     pingdom = {
       source  = "lsc/pingdom"
-      version = "~> 1.2"
+      version = "~> 0.2"
     }
   }
 }
@@ -464,7 +488,7 @@ This project uses [Go Modules](https://github.com/golang/go/wiki/Modules) for de
 ### Build
 
 ```sh
-make build
+mise run build
 ```
 
 The binary will then be available at `_build/terraform-provider-pingdom_VERSION`.
@@ -472,7 +496,16 @@ The binary will then be available at `_build/terraform-provider-pingdom_VERSION`
 ### Install
 
 ```sh
-make install
+mise run install
+```
+
+### Acceptance test
+
+```sh
+mise run testacc --token <PINGDOM_API_TOKEN>
+or
+PINGDOM_API_TOKEN=token mise run testacc
+
 ```
 
 This will place the binary under `$HOME/.terraform.d/plugins/OS_ARCH/terraform-provider-pingdom_VERSION`. After installing you will need to run `terraform init` in any project using the plugin.

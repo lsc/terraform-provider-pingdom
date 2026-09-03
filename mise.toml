@@ -19,7 +19,7 @@ plugin_path = "$(echo $HOME)/.terraform.d/plugins/{{vars.goos}}_{{vars.goarch}}"
 description = "Build the Pingdom provider"
 alias = "b"
 depends = ["mod", "test"]
-run = 'go build -o build/{{vars.goos}}_{{vars.goarch}}/{{vars.name}}_{{vars.tag}}'
+run = 'go build -o _build/{{vars.goos}}_{{vars.goarch}}/{{vars.name}}_{{vars.tag}}'
 
 [tasks.install]
 depends = "build"
