@@ -27,9 +27,9 @@ func TestAccOccurrence_basic(t *testing.T) {
 	}
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckOccurrenceDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactories,
+		CheckDestroy:      testAccCheckOccurrenceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccOccurrenceBasicConfig(maintenance, from, to),
@@ -57,9 +57,9 @@ func TestAccOccurrence_update(t *testing.T) {
 	}
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckOccurrenceDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactories,
+		CheckDestroy:      testAccCheckOccurrenceDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccOccurrenceBasicConfig(maintenance, "", ""),

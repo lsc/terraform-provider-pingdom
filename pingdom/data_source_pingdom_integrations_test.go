@@ -10,8 +10,8 @@ func TestAccDataSourcePingdomIntegrations_basic(t *testing.T) {
 	datasourceName := "data.pingdom_integrations.all"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourcePingdomIntegrationsConfig(),

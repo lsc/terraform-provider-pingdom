@@ -19,9 +19,9 @@ func TestAccResourcePingdomCheck_http(t *testing.T) {
 	updatedName := acctest.RandomWithPrefix("tf-acc-test")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingdomCheckDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactories,
+		CheckDestroy:      testAccCheckPingdomCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePingdomCheckConfig_http(name),
@@ -94,9 +94,9 @@ func TestAccResourcePingdomCheck_tcp(t *testing.T) {
 	updatedName := acctest.RandomWithPrefix("tf-acc-test")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingdomCheckDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactories,
+		CheckDestroy:      testAccCheckPingdomCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePingdomCheckConfig_tcp(name),
@@ -134,9 +134,9 @@ func TestAccResourcePingdomCheck_ping(t *testing.T) {
 	updatedName := acctest.RandomWithPrefix("tf-acc-test")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingdomCheckDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactories,
+		CheckDestroy:      testAccCheckPingdomCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePingdomCheckConfig_ping(name),
@@ -172,9 +172,9 @@ func TestAccResourcePingdomCheck_dns(t *testing.T) {
 	updatedName := acctest.RandomWithPrefix("tf-acc-test")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingdomCheckDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactories,
+		CheckDestroy:      testAccCheckPingdomCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePingdomCheckConfig_dns(name),

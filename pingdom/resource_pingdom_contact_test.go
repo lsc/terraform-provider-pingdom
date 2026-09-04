@@ -39,9 +39,9 @@ func TestAccResourcePingdomContact_basic(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingdomContactDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactories,
+		CheckDestroy:      testAccCheckPingdomContactDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePingdomContactConfig(name, false, sms, email),
