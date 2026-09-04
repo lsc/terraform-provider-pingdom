@@ -12,14 +12,19 @@ import (
 )
 
 var (
-	testAccProviders map[string]*schema.Provider
-	testAccProvider  *schema.Provider
+	// testAccProviderFactories is the ProviderFactories form of the provider
+	// map. TestCase.Providers is deprecated; a factory is called per test so
+	// each one gets a provider that has not been configured by another.
+	testAccProviderFactories map[string]func() (*schema.Provider, error)
+	testAccProvider          *schema.Provider
 )
 
 func init() {
 	testAccProvider = Provider()
-	testAccProviders = map[string]*schema.Provider{
-		"pingdom": testAccProvider,
+	testAccProviderFactories = map[string]func() (*schema.Provider, error){
+		"pingdom": func() (*schema.Provider, error) {
+			return testAccProvider, nil
+		},
 	}
 }
 

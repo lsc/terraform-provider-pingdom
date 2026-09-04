@@ -58,6 +58,9 @@ IMPROVEMENTS:
   resource per refresh.
 * `pingdom_check`: read attributes with `d.Get` rather than `d.GetOk`, which
   cannot distinguish an unset value from an explicit zero.
+* Replaced the SDK calls deprecated in plugin SDK v2: the provider configures
+  through `ConfigureContextFunc`, and acceptance tests declare the provider
+  through `ProviderFactories`.
 
 # Historical releases, by Contentful and others
 

@@ -12,8 +12,8 @@ func TestAccDataSourcePingdomIntegration_basic(t *testing.T) {
 	datasourceName := "data.pingdom_integration.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourcePingdomIntegrationConfig("webhook", false, "test-3", "https://www.example.com"),

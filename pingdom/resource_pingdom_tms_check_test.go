@@ -18,9 +18,9 @@ func TestAccResourcePingdomTmsCheck(t *testing.T) {
 	updatedName := acctest.RandomWithPrefix("tf-acc-test")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckPingdomTmsCheckDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactories,
+		CheckDestroy:      testAccCheckPingdomTmsCheckDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePingdomTmsCheckConfig(name),

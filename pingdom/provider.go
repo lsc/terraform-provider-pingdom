@@ -1,8 +1,10 @@
 package pingdom
 
 import (
+	"context"
 	"log"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/mitchellh/mapstructure"
 )
@@ -50,17 +52,21 @@ func Provider() *schema.Provider {
 			"pingdom_integration":  dataSourcePingdomIntegration(),
 			"pingdom_integrations": dataSourcePingdomIntegrations(),
 		},
-		ConfigureFunc: providerConfigure,
+		ConfigureContextFunc: providerConfigure,
 	}
 }
 
-func providerConfigure(d *schema.ResourceData) (any, error) {
+func providerConfigure(_ context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
 	var config Config
 	configRaw := d.Get("").(map[string]any)
 	if err := mapstructure.Decode(configRaw, &config); err != nil {
-		return nil, err
+		return nil, diag.FromErr(err)
 	}
 
 	log.Println("[INFO] Initializing Pingdom client")
-	return config.Client()
+	clients, err := config.Client()
+	if err != nil {
+		return nil, diag.FromErr(err)
+	}
+	return clients, nil
 }

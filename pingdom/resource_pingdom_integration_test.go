@@ -15,10 +15,10 @@ func TestAccPingdomIntegration_basic(t *testing.T) {
 	resourceName := "pingdom_integration.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
-		IDRefreshName: resourceName,
-		Providers:     testAccProviders,
-		CheckDestroy:  testAccCheckPingdomIntegrationDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		IDRefreshName:     resourceName,
+		ProviderFactories: testAccProviderFactories,
+		CheckDestroy:      testAccCheckPingdomIntegrationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccWebhookIntegration_basicConfig("webhook", false, "test-3", "https://www.example.com"),
@@ -44,10 +44,10 @@ func TestAccPingdomIntegration_update(t *testing.T) {
 	resourceName := "pingdom_integration.test"
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
-		IDRefreshName: resourceName,
-		Providers:     testAccProviders,
-		CheckDestroy:  testAccCheckPingdomIntegrationDestroy,
+		PreCheck:          func() { testAccPreCheck(t) },
+		IDRefreshName:     resourceName,
+		ProviderFactories: testAccProviderFactories,
+		CheckDestroy:      testAccCheckPingdomIntegrationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccWebhookIntegration_basicConfig("webhook", false, "test-3", "https://www.example.com"),

@@ -27,7 +27,7 @@ package pingdom
 
 // 	resource.ParallelTest(t, resource.TestCase{
 // 		PreCheck:     func() { testAccPreCheck(t) },
-// 		Providers:    testAccProviders,
+// 		ProviderFactories:    testAccProviderFactories,
 // 		CheckDestroy: testAccCheckUserDestroy,
 // 		Steps: []resource.TestStep{
 // 			{
@@ -71,7 +71,7 @@ package pingdom
 
 // 	resource.ParallelTest(t, resource.TestCase{
 // 		PreCheck:     func() { testAccPreCheck(t) },
-// 		Providers:    testAccProviders,
+// 		ProviderFactories:    testAccProviderFactories,
 // 		CheckDestroy: testAccCheckUserDestroy,
 // 		Steps: []resource.TestStep{
 // 			{
