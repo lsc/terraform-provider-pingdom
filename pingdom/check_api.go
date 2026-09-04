@@ -8,9 +8,9 @@ import (
 	"github.com/mbarper/go-pingdom/pingdom"
 )
 
-// This file works around three gaps in go-pingdom's check API surface. Each one
-// is only reachable on update, and each one leaves the check in a state that
-// disagrees with Terraform's state.
+// This file works around gaps in go-pingdom's check API surface. Each one leaves
+// the check in a state that disagrees with Terraform's state; all but the missing
+// ping-check tags parameter are only reachable on update.
 
 // checkResponse extends pingdom.CheckResponse with fields the Pingdom API
 // returns but go-pingdom's response struct does not declare. Without
@@ -80,9 +80,10 @@ func isCheckGone(err error) bool {
 // remove, which the caller determines from the prior state and passes in as
 // clear. Anything not being cleared is left exactly as go-pingdom rendered it.
 //
-// Only PutParams is overridden. PostParams still resolves to the embedded
-// implementation, which strips empty values -- correct for create, where nothing
-// exists to clear.
+// For those, only PutParams is overridden. PostParams still resolves to the
+// embedded implementation, which strips empty values -- correct for create, where
+// nothing exists to clear. pingCheck is the exception: it overrides both, because
+// the parameter it restores is absent from create as well.
 
 // httpCheck fixes clearing of HTTP basic auth and the shouldcontain /
 // shouldnotcontain pair.
@@ -123,8 +124,19 @@ func (ck tcpCheck) PutParams() map[string]string {
 	return m
 }
 
-// pingCheck and dnsCheck carry no type-specific corrections; they exist so every
-// check type gets the shared parameter handling in finalizePutParams.
+// pingCheck restores the tags parameter, which go-pingdom omits for this check
+// type alone -- HttpCheck, TCPCheck and DNSCheck all render it.
+//
+// The parameter never reaches the API, so a ping check's tags are never written
+// at all: create silently drops them, an update keeps whatever the check has
+// while Terraform records the new value, and the resulting diff returns on every
+// plan. PostParams is affected the same way because it is built from PutParams,
+// so both paths need the parameter added back.
+//
+// tags is not in alwaysRenderedListParams because go-pingdom does not render it
+// here at all, so there is nothing to suppress -- it has to be added instead.
+// Adding it is still subject to the same rule as those parameters: an empty
+// value goes out only when clear says to remove a value the check actually has.
 type pingCheck struct {
 	*pingdom.PingCheck
 	clear []string
@@ -132,10 +144,29 @@ type pingCheck struct {
 
 func (ck pingCheck) PutParams() map[string]string {
 	m := ck.PingCheck.PutParams()
+	ck.addTags(m)
 	finalizePutParams(m, ck.clear)
 	return m
 }
 
+// PostParams has to be overridden too. The embedded implementation builds on the
+// embedded PutParams, not this one, so without it create never sends tags.
+func (ck pingCheck) PostParams() map[string]string {
+	m := ck.PingCheck.PostParams()
+	ck.addTags(m)
+	return m
+}
+
+// addTags supplies the missing parameter, leaving an empty value to the clear
+// handling in finalizePutParams.
+func (ck pingCheck) addTags(m map[string]string) {
+	if _, ok := m["tags"]; !ok && ck.Tags != "" {
+		m["tags"] = ck.Tags
+	}
+}
+
+// dnsCheck carries no type-specific corrections; it exists so every check type
+// gets the shared parameter handling in finalizePutParams.
 type dnsCheck struct {
 	*pingdom.DNSCheck
 	clear []string

@@ -1024,6 +1024,123 @@ func TestUpdateClearsPreviouslySetListParams(t *testing.T) {
 	}
 }
 
+// basePingConfig is the minimal valid ping check.
+func basePingConfig() map[string]any {
+	return map[string]any{
+		"name": "MDW SRX2 OOB NAT",
+		"host": "199.229.226.158",
+		"type": checkTypePing,
+	}
+}
+
+// Create is affected by the same omission, via PostParams. Tags set on a new
+// ping check were silently dropped, so the check came into existence untagged.
+func TestPingCheckCreateSendsTags(t *testing.T) {
+	fake := &fakeCheckAPI{}
+	meta, stop := fake.start(t)
+	defer stop()
+
+	cfg := basePingConfig()
+	cfg["tags"] = "mdw,nat,oob,srx2"
+	applyCheck(t, meta, nil, cfg)
+
+	if got := fake.check["tags"]; got != "mdw,nat,oob,srx2" {
+		t.Errorf("tags on create = %q, want mdw,nat,oob,srx2", got)
+	}
+}
+
+// TestPingCheckSendsTags covers a gap specific to ping checks: go-pingdom's
+// PingCheck.PutParams omits tags altogether, so a tag change was never sent.
+// The check kept its original tags, the read path refreshed them back, and the
+// same diff returned on every plan.
+func TestPingCheckSendsTags(t *testing.T) {
+	fake := &fakeCheckAPI{}
+	meta, stop := fake.start(t)
+	defer stop()
+
+	cfg := basePingConfig()
+	cfg["tags"] = "mdw,nat,oob,srx1"
+	state := applyCheck(t, meta, nil, cfg)
+
+	retagged := basePingConfig()
+	retagged["tags"] = "mdw,nat,oob,srx2"
+	applyCheck(t, meta, state, retagged)
+
+	put := fake.puts[len(fake.puts)-1]
+	if got := put["tags"]; got != "mdw,nat,oob,srx2" {
+		t.Errorf("tags = %q, want mdw,nat,oob,srx2", got)
+	}
+}
+
+// The tags rename must actually settle: a second plan against the refreshed
+// state has to produce no further diff.
+func TestPingCheckTagsDoNotReappear(t *testing.T) {
+	fake := &fakeCheckAPI{}
+	meta, stop := fake.start(t)
+	defer stop()
+
+	cfg := basePingConfig()
+	cfg["tags"] = "mdw,nat,oob,srx1"
+	state := applyCheck(t, meta, nil, cfg)
+
+	retagged := basePingConfig()
+	retagged["tags"] = "mdw,nat,oob,srx2"
+	state = applyCheck(t, meta, state, retagged)
+
+	state = refreshCheck(t, meta, state)
+
+	r := resourcePingdomCheck()
+	diff, err := r.Diff(context.Background(), state, terraform.NewResourceConfigRaw(retagged), meta)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if diff != nil && !diff.Empty() {
+		t.Errorf("tags still diff after apply and refresh: %v", diff.Attributes)
+	}
+}
+
+// A ping check that never set tags must not send the parameter, in line with
+// how every other never-set parameter is handled.
+func TestPingCheckOmitsUnsetTags(t *testing.T) {
+	fake := &fakeCheckAPI{}
+	meta, stop := fake.start(t)
+	defer stop()
+
+	state := applyCheck(t, meta, nil, basePingConfig())
+
+	renamed := basePingConfig()
+	renamed["host"] = "199.229.226.159"
+	applyCheck(t, meta, state, renamed)
+
+	put := fake.puts[len(fake.puts)-1]
+	if got, present := put["tags"]; present {
+		t.Errorf("tags must be omitted when never set, got %q", got)
+	}
+}
+
+// Removing tags from a ping check that had them must clear them, which needs
+// the empty parameter sent explicitly.
+func TestPingCheckClearsPreviouslySetTags(t *testing.T) {
+	fake := &fakeCheckAPI{}
+	meta, stop := fake.start(t)
+	defer stop()
+
+	cfg := basePingConfig()
+	cfg["tags"] = "mdw,nat,oob,srx1"
+	state := applyCheck(t, meta, nil, cfg)
+
+	applyCheck(t, meta, state, basePingConfig())
+
+	put := fake.puts[len(fake.puts)-1]
+	got, present := put["tags"]
+	if !present {
+		t.Fatal("tags must be sent empty to clear a previous value")
+	}
+	if got != "" {
+		t.Errorf("tags = %q, want empty", got)
+	}
+}
+
 // TestDataSourcePingdomCheck exercises the check data source, whose purpose is
 // to show what the API reports -- in particular whether `teams` comes back
 // populated, which distinguishes a read problem from a write problem.

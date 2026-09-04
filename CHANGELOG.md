@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+BUG FIXES:
+
+* `pingdom_check`: `tags` on a `ping` check are now written. go-pingdom omits the
+  parameter from `PingCheck` alone -- every other check type renders it -- so tags
+  were dropped on create and could never be changed afterwards: the check kept
+  whatever tags it had while Terraform recorded the new value, and the same diff
+  returned on every plan. Emptying `tags` on a ping check now clears them too.
+
 ## 0.2.0 - 0.2.3 (August 18, 2026)
 
 BUG FIXES:
