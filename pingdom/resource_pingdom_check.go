@@ -419,6 +419,13 @@ func clearedParams(d *schema.ResourceData, checkType string) []string {
 				clear = append(clear, attr)
 			}
 		}
+	case checkTypePing:
+		// pingCheck adds the tags parameter go-pingdom leaves out, and adds it
+		// only when non-empty. Emptying the attribute therefore needs the same
+		// explicit clear as any other removable value.
+		if !isSet("tags") && wasSet("tags") {
+			clear = append(clear, "tags")
+		}
 	}
 	return clear
 }
